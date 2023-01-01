@@ -1,5 +1,6 @@
-/home/andrey/Documentos/Xixi-peralta-2/config.json
-/home/andrey/Documentos/Xixi-peralta-2/node_modules
+config.json
+node_modules/
+index.js~
 .*
 !.gitignore
 # Compiled source #
