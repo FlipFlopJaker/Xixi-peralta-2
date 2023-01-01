@@ -1,0 +1,134 @@
+
+const { SlashCommandBuilder } = require("discord.js");
+const { EmbedBuilder } = require('discord.js');
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName("pesquisar")
+    .setDescription(" pesquisa en guguel")
+    .addStringOption ((option) => 
+    option
+        .setName('suapesquinha')
+        .setDescription( 'sua pesquinha x2')
+        .setRequired( true )
+    ),
+
+  async execute(interaction) {
+      let busquidinha = interaction.options.get('suapesquinha').value;
+
+    const response = await fetch (  
+        `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${busquidinha}/json`);
+    const data = await response.json();
+
+   const response2 = await fetch (`https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${data.PC_Compounds[0].id.id.cid}/json`);
+    const data2 = await response2.json(); 
+console.log(busquidinha);
+
+   const responsebp = await fetch (`https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${data.PC_Compounds[0].id.id.cid}/JSON?heading=Boiling+Point`);
+    const databp =  await responsebp.json(); 
+/*
+   const responsed = await fetch (`https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${data.PC_Compounds[0].id.id.cid}/json`);
+    const datad = await responsed.json(); 
+
+   const responsemp = await fetch (`https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${data.PC_Compounds[0].id.id.cid}/json`);
+    const datamp = await responsemp.json(); 
+*/
+   const responsesy = await fetch (`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${data.PC_Compounds[0].id.id.cid}/synonyms/json`);
+    const datasy = await responsesy.json(); 
+
+   const responseproperty = await fetch (`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${data.PC_Compounds[0].id.id.cid}/property/IUPACName,MolecularWeight,MolecularFormula/json`);
+    const dataproperty = await responseproperty.json();
+
+   const responseGHS = await fetch (`https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${data.PC_Compounds[0].id.id.cid}/JSON?heading=Hazards+Identification`);
+    const dataGHS =  await responseGHS.json(); 
+
+/*   const responses = await fetch (`https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${data.PC_Compounds[0].id.id.cid}/json?heading=solubility`);
+    const datas = await responses.json(); 
+      var Pattern = /°C/;
+const Sol = datas.Record.Section[0].Section[0].Section[0].Information;
+const papapalkilo = Sol.map(i => i.value.StringWithMarkup[0].String);
+      var result = papapalkilo.filter(function (i) {return Pattern.test(i); });
+      console.log(result);
+      
+console.log(papapalkilo);*/
+const HZ = dataGHS.Record;
+if (HZ !=  undefined){
+    const HZ2 = HZ.Section[0].Section[0].Section[0].Information[2].Value.StringWithMarkup;    
+    const emojisGHS =  HZ.Section[0].Section[0].Section[0].Information[0].Value.StringWithMarkup[0].Markup;
+    var papa = HZ2.map( i => i.String).join('\n'); 
+    var emojis = emojisGHS.map( b => b.URL.slice(b.URL.length-9, b.URL.length-4));
+    var bixo = [];
+    for (var i = 0; i< emojis.length; i++){
+        var marika = interaction.client.emojis.cache.find(emoji => emoji.name == emojis[i]));
+     var coñolamadre = bixo.push(marika)};
+} else {
+var papa = 'no data'};
+
+/*
+HZ.forEach( element => console.log(HZ[element].String));
+   /* .Record.Section[0].Section[0].Information.1.Value.Number);
+*/
+
+
+
+
+
+
+      return await interaction.reply({
+          embeds: [{
+            title: 'Búsqueda motorizada por xixi peralta',
+            author: { name: 'XiXi Peralta', iconURL:'https://thumbs.dreamstime.com/b/radiation-icon-symbol-vector-radioactive-140970585.jpg' },
+            description: `** Una busquidnhina sobre \"${busquidinha}\", do suo amigo ${interaction.user} ha fasido o següente : **`,
+              fields: [
+                  {name:'Nombre TUPAC', value:`${dataproperty.PropertyTable.Properties[0].IUPACName}`, inline: false}, 
+                  {name: 'Masa Moleculiar', value:`${dataproperty.PropertyTable.Properties[0].MolecularWeight} g/mol`, inline: true},
+                  
+                  {name: 'Sinónimos', value:`${datasy.InformationList.Information[0].Synonym[0]},\n ${datasy.InformationList.Information[0].Synonym[1]
+                  }`,
+                  inline:true},
+                  {name: 'GHS',
+                      value:`${bixo.join('\n')} \n ${papa}`,
+                      inline: false},
+
+
+
+           /*     {name: 'Boiling point', value:`${databp.Record.Section[0].Section[0].Section[0].Information.1.Value.StringWithMarkup.Number.0}` + `${databp.Record.Section[0].Section[0].Section[0].Information[1].Value.Number.Unit}`, inline: false},*/
+                 
+
+
+
+
+                  { name: 'Wikipiria en', value:`[Clika aki pendejo](https://en.wikipedia.org/wiki/${busquidinha})`, inline: false },
+                         { name: 'Wikipiria es', value:`[Clika aki pendejo](https://es.wikipedia.org/wiki/${busquidinha})`, inline: false },
+                  { name: 'PubChem', value:`[Pubchem](https://pubchem.ncbi.nlm.nih.gov/#query=${busquidinha})`, inline: false },
+                 { name: 'Scifinder', value:`[Cas](https://commonchemistry.cas.org/results?q=${busquidinha})`, inline: false },
+            /*      {name:'/boiling point/', value:'', inline: false},    
+                  {name:'/boiling point/', value:'', inline: false},    
+
+                  {name:'/boiling point/', value:'', inline: false},    
+                  {name:'/boiling point/', value:'', inline: false},    
+
+*/
+
+              ],
+
+              Image:{
+               url:`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${data.PC_Compounds[0].id.id.cid}/PNG`,
+              },
+         }],
+          empheral : false, 
+          });
+  }}/*
+            {
+            }
+https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${data.PC_Compounds[0].id.id.cid}2244/JSON?heading=Hazards+Identification,
+https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${data.PC_Compounds[0].id.id.cid}2244/JSON?heading=Hazards+Identification,
+//
+//
+https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${data.PC_Compounds[0].id.id.cid}2244/JSON?heading=Boiling+Point,
+https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${data.PC_Compounds[0].id.id.cid}2244/JSON?heading=Melting+Point,
+https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/${data.PC_Compounds[0].id.id.cid}2244/JSON?heading=Solubility,
+*/        
+      
+    
+  
+
