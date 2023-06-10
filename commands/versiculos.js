@@ -1,5 +1,5 @@
 
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, ContextMenuCommandAssertions } = require('discord.js');
 const { EmbedBuilder} = require('discord.js');
 
     /*A*/
@@ -235,33 +235,37 @@ execute(interaction){
   interaction.channel.send({embeds: [embed]}).then((embedMsg) => {
             const mojis = versos.map((vers) => vers.emoji);
             mojis.forEach((emoji) => embedMsg.react(emoji));
-
-
-            const filter = (reaction, user) => mojis.includes(reaction.emoji.name) && user.id === interaction.author.id;
+            interaction.deferReply()
+            console.log(interaction.user.id)
+            const filter = (reaction, user) => mojis.includes(reaction.emoji.name) ;
 const collector = embedMsg.createReactionCollector(filter, {
     max: mojis.length,
     time: 60000,
         });
             collector.on('collect', (reaction, user) => {
+
+                if(user.bot) return console.log("bro")
                 const selectedCategory = versos.find((category) => category.emoji === reaction.emoji.name,
                 );
-                console.log(selectedCategory);
+
 
             if (!selectedCategory){
             return interaction.channel.send('No funca');
             }
+
             const  embod = new EmbedBuilder()
                     .setTitle(selectedCategory.title)
                     .setDescription(selectedCategory.description)
                     .addFields(selectedCategory.commands);
-                interaction.deffereply({embeds: [embod]});
+                return interaction.channel.send({embeds: [embod]});
             });
             collector.on('end', (collected, reason) => {
                 if (reason === 'limit')
                     return interaction.channel.send('state kieto');
-                return interaction.channel.send('novamas');
+                return interaction.reply(interaction.channel.send('novamas'));
             });
         });
+
     },
 };
 

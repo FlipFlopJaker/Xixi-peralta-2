@@ -7,6 +7,7 @@ const {
   Partials,
   ActivityType
 } = require("discord.js");
+const {EmbedBuilder} = require('discord.js');
 const { token } = require("./config.json");
 const client = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
@@ -16,6 +17,8 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
   ],
 });
+const { ChannelType } = require('discord.js');
+
 client.commands = new Collection();
 const commandsPath = path.join(__dirname, "commands");
 const commandFiles = fs
@@ -61,10 +64,16 @@ client.on("interactionCreate", async (interaction) => {
 
 //answer the deleted message
 //
-//client.on('messageDelete', (missatge) => {
-//   if (missatge.author.bot ) return;
+client.on('messageDelete', (missatge) => {
+  // if (missatge.author.bot) return;
 //   // missatge.channel.send(missatge.attachments.first().attachment);
-// missatge.channel.send(`${missatge.author.username} ha dicho "${missatge.content}"`);
+ missatge.channel.send(`${missatge.author.username} ha dicho "${missatge.content}"`)});
+/*client.on('messageDelete', (klarintevasacagar) => {
+  if (klarintevasacagar.author.id === '340183665659346945' && klarintevasacagar.guild.id === '666042655259754497'){
+      klarintevasacagar.guild.channels.cache.forEach(channel => klarintevasacagar.channel.send('notas esquizofrenico para ya de una jodida vez que me tienes hasta los cojones')) ;
+  }
+});
+
 
 /* decir que*/
 /*
@@ -83,8 +92,34 @@ quebueno.channel.send("https://cdn.discordapp.com/attachments/664187293451419678
 } else {
   return;
 };*/
+client.on("messageCreate", (moro)=> {
+      if (moro.guild.id === "666042655259754497" && moro.content.includes("moro")) {
+        const embellecido = new EmbedBuilder()
+        .setColor('#171b20')
+          .setTitle('Moros: si o no')
+        .setDescription('\u200B')
+        .addFields(
+          { name: '\u200B', value: '✅ Sí'},
+          { name: '\u200B', value:'❌ No'},
+        );
+        moro.channel.send({embeds: [embellecido]}).then((embedMsg) => {
+          const majos = [ '✅','❌'];
+         for (let i = 0; i < majos.length; i++){
+           embedMsg.react(majos[i]);
+        }})
+      }
+         else{
+        };
+});
 
 
+
+client.on("messageCreate", (versikul)=> {
+      if (versikul.guild.id === "666042655259754497" && versikul.content.includes("versículos")) {
+        versikul.channel.send("https://cdn.discordapp.com/attachments/1009185013666943068/1078114741089751050/el-arma-mas-poderosa-en-el-mundo-es-la-palabra-de-dios-194108-2136267279.jpeg");
+        } else {
+        };
+});
 
 
 client.on("messageCreate", (quebueno)=> {
@@ -93,6 +128,8 @@ client.on("messageCreate", (quebueno)=> {
         } else {
         };
 });
+
+
 /*
 client.on("ready", async () => {
   await client.channels
